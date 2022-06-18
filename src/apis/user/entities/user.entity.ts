@@ -6,6 +6,6 @@ export class User {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToMany(() => Recruit, (recruit) => recruit.applicants, { eager: true })
+  @ManyToMany(() => Recruit, (apply) => apply.applicants, { eager: true })
   applies: Recruit[];
 }

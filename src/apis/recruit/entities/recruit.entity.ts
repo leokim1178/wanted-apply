@@ -3,6 +3,7 @@ import { User } from 'src/apis/user/entities/user.entity';
 import {
   Column,
   Entity,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -10,8 +11,8 @@ import {
 
 @Entity()
 export class Recruit {
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @PrimaryGeneratedColumn('increment')
+  id: number;
 
   @Column()
   position: string;
@@ -36,6 +37,7 @@ export class Recruit {
   })
   company: Company;
 
-  @ManyToMany(() => User, (user) => user.applies, { nullable: true })
+  @JoinTable()
+  @ManyToMany(() => User, (applicant) => applicant.applies)
   applicants: User[];
 }

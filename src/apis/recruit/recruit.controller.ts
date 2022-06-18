@@ -1,78 +1,106 @@
-import { Controller, Get, Patch, Post, Req } from '@nestjs/common';
-import { Request } from 'express';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { Recruit } from './entities/recruit.entity';
 import { RecruitService } from './recruit.service';
-
-interface IRecruit {
-  position: string;
-}
 
 @Controller()
 export class RecruitController {
   constructor(private readonly recruitService: RecruitService) {}
 
-  @Get('recruit/fetchall')
-  fetchRecruit() {
+  @Get('recruits')
+  fetchRecruits() {
     return this.recruitService.find();
   }
 
-  @Get('/recruit/search')
+  @Get('recruit')
   searchRecruit(
-    @Req()
-    req: Request,
+    @Query('search')
+    search: string,
   ) {
-    const { search } = req.query;
-    console.log(search);
-
-    return this.recruitService.search({ search });
+    try {
+      if (!search) throw new NotFoundException('검색어를 입력해주세요');
+      return this.recruitService.search({ search });
+    } catch (error) {
+      return error;
+    }
   }
 
-  @Get('/recruit/fetchdetail')
-  fetchDetail(
-    @Req()
-    req: Request,
+  @Get('recruit/:id')
+  async fetchDetail(
+    @Param('id')
+    recruitId: number,
   ) {
-    const { recruit } = req.query;
-    return this.recruitService.findDetail({ recruit });
+    try {
+      const recruit = await this.recruitService.checkExist({ recruitId });
+      return this.recruitService.findDetail({ recruit });
+    } catch (error) {
+      return error;
+    }
   }
 
-  @Post('/recruit/create')
-  createRecruit(
-    @Req()
-    req: Request,
+  @Post('recruit/create/:cId')
+  async createRecruit(
+    @Param('cId') companyId: number,
+    @Body()
+    recruitData: Recruit,
   ) {
-    const { companyId, position, incentive, detail, techStack } = req.body;
-
-    return this.recruitService.create({
-      companyId,
-      position,
-      incentive,
-      detail,
-      techStack,
-    });
+    try {
+      const company = await this.recruitService.checkExist({ companyId });
+      return this.recruitService.create({
+        company,
+        recruitData,
+      });
+    } catch (error) {
+      return error;
+    }
   }
 
-  @Post('/recruit/update')
-  updateRecruit(
-    @Req()
-    req: Request,
+  @Patch('recruit/update/:id')
+  async updateRecruit(
+    @Param('id') recruitId: number, //
+    @Body() updateData: Recruit,
   ) {
-    const { recruitId, position, incentive, detail, techStack } = req.body;
-    return this.recruitService.update({
-      recruitId,
-      position,
-      incentive,
-      detail,
-      techStack,
-    });
+    try {
+      const recruit = await this.recruitService.checkExist({ recruitId });
+      return this.recruitService.update({
+        recruit,
+        updateData,
+      });
+    } catch (error) {
+      return error;
+    }
   }
 
-  @Post('/recruit/delete')
-  deleteRecruit(
-    @Req()
-    req: Request,
+  @Post('recruit/delete/:id')
+  async deleteRecruit(
+    @Param('id') recruitId: number, //
   ) {
-    const { recruitId } = req.body;
-    return this.recruitService.delete({ recruitId });
+    try {
+      const recruit = await this.recruitService.checkExist({ recruitId });
+      return this.recruitService.delete({ recruit });
+    } catch (error) {
+      return error;
+    }
+  }
+
+  @Post('recruit/apply')
+  async applyRecruit(
+    @Body()
+    applyData: any,
+  ) {
+    try {
+      const result = await this.recruitService.apply({ applyData });
+      return result;
+    } catch (error) {
+      return error;
+    }
   }
 }
