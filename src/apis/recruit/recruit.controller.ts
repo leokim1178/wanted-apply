@@ -46,7 +46,8 @@ export class RecruitController {
    * @returns `[Recruit]`
    */
   @Get('recruits')
-  async fetchRecruits() {
+  async fetchRecruits(): //
+  Promise<Recruit[]> {
     try {
       return await this.recruitService.findAll();
     } catch (error) {
@@ -76,7 +77,7 @@ export class RecruitController {
    * Create Recruit API
    * @type [`Post`]
    * @param {number} companyId  ID of Company ex. 5
-   * @param {CreateRecruitInput} createRecruitInput : JSON type for createRecruit
+   * @param {CreateRecruitInput} createRecruitInput : Body(JSON for createRecruit)
    * @returns `Recruit`
    */
   @Post('recruit/create/:cid')
@@ -100,12 +101,12 @@ export class RecruitController {
    * Update Recruit API
    * @type [`Patch`]
    * @param {number} recruitId ID of Recruit ex. 15
-   * @param {UpdateRecruitInput}updateRecruitInput : JSON type for updateRecruit
+   * @param {UpdateRecruitInput}updateRecruitInput : Body(JSON for createRecruit)
    * @returns `Recruit`
    */
   @Patch('recruit/update/:id')
   async updateRecruit(
-    @Param('id') recruitId: number, //
+    @Param('id') recruitId: number,
     @Body() updateRecruitInput: UpdateRecruitInput,
   ) {
     try {
@@ -141,8 +142,8 @@ export class RecruitController {
    * Apply Recruit API
    * @type [`Post`]
    * @body applyData : JSON type for updateRecruit
-   *  @param {string} recruitId ID of Recruit ex. 15
-   *  @param {string} userId ID('uuid') of User ex. `123e4567-e89b-12d3-a456-426614174000`
+   *  @param {number} recruitId ID of Recruit ex. 15
+   *  @param {number} userId ID('uuid') of User ex. `123e4567-e89b-12d3-a456-426614174000`
    * @returns `Recruit`
    */
   @Post('recruit/apply')
