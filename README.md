@@ -2,7 +2,7 @@
 
 ### 필수 기술요건
 
-- [x] 사용 언어 : JavaScript
+- [x] 사용 언어 : TypeScript
 - [x] 프레임워크 : nestjs
 - [x] REST API 로 구현
 - [x] ORM 사용하여 구현 : TypeORM
